@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>TRD Examination | TRDinfo</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        /* HEADER */
+
+        .header {
+            background: #0b3d62;
+            color: white;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: bold;
+        }
+
+        .exam-title {
+            font-size: 18px;
+        }
+
+        .timer {
+            background: #dc2626;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 17px;
+        }
+
+        /* MAIN */
+
+        .container {
+            max-width: 1000px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .candidate-info {
+            background: white;
+            padding: 18px 22px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .candidate-info strong {
+            color: #0b3d62;
+        }
+
+        /* QUESTION */
+
+        .question-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 22px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+        }
+
+        .question-number {
+            color: #0b3d62;
+            font-weight: bold;
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        /* OPTIONS */
+
+        .option {
+            display: block;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .option:hover {
+            background: #eff6ff;
+            border-color: #0b3d62;
+        }
+
+        .option input {
+            margin-right: 10px;
+        }
+
+        /* QUESTION NAVIGATION */
+
+        .question-navigation {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .question-navigation h3 {
+            color: #0b3d62;
+            margin-bottom: 15px;
+        }
+
+        .numbers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .number {
+            width: 38px;
+            height: 38px;
+            border: 1px solid #94a3b8;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+        }
+
+        /* SUBMIT */
+
+        .submit-container {
+            text-align: center;
+            margin: 35px 0 60px;
+        }
+
+        .submit-btn {
+            background: #0b3d62;
+            color: white;
+            border: none;
+            padding: 15px 45px;
+            border-radius: 7px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #155e75;
+        }
+
+        .warning {
+            margin-top: 12px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+
+            .header {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .exam-title {
+                order: 3;
+                width: 100%;
+                text-align: center;
+            }
+
+            .question-card {
+                padding: 20px;
+            }
+
+            .question-text {
+                font-size: 16px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<header class="header">
+
+    <div class="logo">
+        🚆 TRDinfo
+    </div>
+
+    <div class="exam-title">
+        {{ exam.name }}
+    </div>
+
+    <div class="timer">
+        ⏱ <span id="timer">00:00</span>
+    </div>
+
+</header>
+
+
+<!-- MAIN -->
+
+<div class="container">
+
+
+    <!-- CANDIDATE -->
+
+    <div class="candidate-info">
+
+        <strong>Candidate:</strong>
+        {{ request.session.candidate_name }}
+
+        &nbsp;&nbsp; | &nbsp;&nbsp;
+
+        <strong>Employee No:</strong>
+        {{ request.session.employee_number }}
+
+    </div>
+
+
+    <!-- EXAM FORM -->
+
+    <form method="POST" >
+
+        {% csrf_token %}
+
+
+        <!-- QUESTIONS -->
+
+        {% for question in questions %}
+
+        <div class="question-card"
+             id="question{{ forloop.counter }}">
+
+            <div class="question-number">
+
+                Question {{ forloop.counter }}
+                of {{ questions|length }}
+
+            </div>
+
+
+            <div class="question-text">
+
+                {{ question.question_text }}
+
+            </div>
+
+
+            <label class="option">
+
+                <input
+                    type="radio"
+                    name="question_{{ question.id }}"
+                    value="A">
+
+                A. {{ question.option_a }}
+
+            </label>
+
+
+            <label class="option">
+
+                <input
+                    type="radio"
+                    name="question_{{ question.id }}"
+                    value="B">
+
+                B. {{ question.option_b }}
+
+            </label>
+
+
+            <label class="option">
+
+                <input
+                    type="radio"
+                    name="question_{{ question.id }}"
+                    value="C">
+
+                C. {{ question.option_c }}
+
+            </label>
+
+
+            <label class="option">
+
+                <input
+                    type="radio"
+                    name="question_{{ question.id }}"
+                    value="D">
+
+                D. {{ question.option_d }}
+
+            </label>
+
+        </div>
+
+        {% endfor %}
+
+
+        <!-- QUESTION NUMBERS -->
+
+        <div class="question-navigation">
+
+            <h3>
+                Questions
+            </h3>
+
+            <div class="numbers">
+
+                {% for question in questions %}
+
+                <a
+                    href="#question{{ forloop.counter }}"
+                    style="text-decoration:none;color:#1e293b;">
+
+                    <div class="number">
+                        {{ forloop.counter }}
+                    </div>
+
+                </a>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <!-- SUBMIT -->
+
+        <div class="submit-container">
+
+            <button
+                type="submit"
+                class="submit-btn">
+
+                SUBMIT EXAM
+
+            </button>
+
+            <div class="warning">
+
+                Please review your answers before submitting.
+
+            </div>
+
+        </div>
+
+
+    </form>
+
+
+</div>
+
+
+<!-- TIMER -->
+
+<script>
+
+    let totalSeconds =
+        {{ exam.duration_minutes }} * 60;
+
+
+    function updateTimer() {
+
+        let minutes =
+            Math.floor(totalSeconds / 60);
+
+        let seconds =
+            totalSeconds % 60;
+
+
+        document.getElementById("timer").textContent =
+
+            String(minutes).padStart(2, "0")
+            + ":"
+            + String(seconds).padStart(2, "0");
+
+
+        if (totalSeconds <= 0) {
+
+            alert(
+                "Time is over. The examination will be submitted."
+            );
+
+            document.querySelector("form").submit();
+
+            return;
+        }
+
+
+        totalSeconds--;
+
+    }
+
+
+    updateTimer();
+
+    setInterval(updateTimer, 1000);
+
+</script>
+
+
+</body>
+
+</html>

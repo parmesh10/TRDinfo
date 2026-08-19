@@ -1,0 +1,635 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TRDinfo | TRD Examination Portal</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            background: #0b3d62;
+            color: white;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 6%;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 32px;
+        }
+
+        .logo-text {
+            font-size: 25px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .logo-subtitle {
+            font-size: 11px;
+            color: #cbd5e1;
+            margin-top: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        .nav-links a:hover {
+            color: #facc15;
+        }
+
+        .login-btn {
+            background: #facc15;
+            color: #111827 !important;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        /* HERO */
+
+        .hero {
+            min-height: 460px;
+            background:
+                linear-gradient(
+                    rgba(7, 38, 62, 0.90),
+                    rgba(7, 38, 62, 0.90)
+                ),
+                linear-gradient(135deg, #0b3d62, #155e75);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            padding: 60px 20px;
+        }
+
+        .hero-content {
+            max-width: 850px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .hero h1 span {
+            color: #facc15;
+        }
+
+        .hero p {
+            font-size: 19px;
+            line-height: 1.7;
+            color: #e2e8f0;
+            margin-bottom: 35px;
+        }
+
+        .exam-main-btn {
+            display: inline-block;
+            background: #facc15;
+            color: #111827;
+            text-decoration: none;
+            padding: 15px 38px;
+            border-radius: 7px;
+            font-size: 17px;
+            font-weight: bold;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .exam-main-btn:hover {
+            background: #fde047;
+            transform: translateY(-2px);
+        }
+
+        /* FEATURES */
+
+        .section {
+            padding: 65px 6%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-title h2 {
+            font-size: 32px;
+            color: #0b3d62;
+            margin-bottom: 10px;
+        }
+
+        .section-title p {
+            color: #64748b;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 22px;
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 30px 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+            transition: 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .feature-icon {
+            font-size: 38px;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            color: #0b3d62;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* EXAM CARD */
+
+        .exam-section {
+            background: #eaf2f8;
+        }
+
+        .exam-card {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            border-radius: 14px;
+            padding: 45px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .exam-card-content h2 {
+            color: #0b3d62;
+            font-size: 30px;
+            margin-bottom: 12px;
+        }
+
+        .exam-card-content p {
+            color: #64748b;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .exam-details {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .exam-detail {
+            font-size: 14px;
+            color: #475569;
+        }
+
+        .exam-detail strong {
+            display: block;
+            color: #0b3d62;
+            font-size: 18px;
+        }
+
+        .exam-icon-large {
+            font-size: 90px;
+        }
+
+        /* ABOUT */
+
+        .about {
+            max-width: 950px;
+            margin: auto;
+            text-align: center;
+        }
+
+        .about p {
+            color: #64748b;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* FOOTER */
+
+        footer {
+            background: #082f49;
+            color: white;
+            padding: 30px 6%;
+            text-align: center;
+        }
+
+        footer h3 {
+            margin-bottom: 8px;
+        }
+
+        footer p {
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 850px) {
+
+            .features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .exam-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .exam-details {
+                justify-content: center;
+            }
+
+            .nav-links {
+                gap: 12px;
+            }
+
+            .hero h1 {
+                font-size: 38px;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            .navbar {
+                height: auto;
+                padding: 15px 5%;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                min-height: 420px;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .exam-card {
+                padding: 30px 20px;
+            }
+
+            .exam-icon-large {
+                font-size: 65px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVIGATION -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                🚆
+            </div>
+
+            <div>
+                <div class="logo-text">
+                    TRDinfo
+                </div>
+
+                <div class="logo-subtitle">
+                    TRD Information Portal
+                </div>
+            </div>
+
+        </div>
+
+        <div class="nav-links">
+
+            <a href="/">Home</a>
+
+            <a href="#about">About</a>
+
+            <a href="#exam">Exam</a>
+
+            <a href="/admin/" class="login-btn">
+                Admin Login
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- HERO SECTION -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <h1>
+                Welcome to <span>TRDinfo</span>
+            </h1>
+
+            <p>
+                A digital platform for TRD examination,
+                assessment and knowledge management.
+                Test your knowledge through randomly selected
+                questions from the TRD question bank.
+            </p>
+
+            <a href="#exam" class="exam-main-btn">
+                📝 START TRD EXAM
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- FEATURES -->
+
+    <section class="section">
+
+        <div class="section-title">
+
+            <h2>
+                TRD Examination Features
+            </h2>
+
+            <p>
+                A simple and professional online examination system
+            </p>
+
+        </div>
+
+
+        <div class="features">
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    🎲
+                </div>
+
+                <h3>
+                    Random Questions
+                </h3>
+
+                <p>
+                    Questions are randomly selected from
+                    the TRD question bank for every examination.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    ⏱️
+                </div>
+
+                <h3>
+                    Timed Exam
+                </h3>
+
+                <p>
+                    Complete your examination within
+                    the configured time limit.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    📊
+                </div>
+
+                <h3>
+                    Instant Result
+                </h3>
+
+                <p>
+                    Your answers are evaluated automatically
+                    immediately after submission.
+                </p>
+
+            </div>
+
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    🏆
+                </div>
+
+                <h3>
+                    Score & Result
+                </h3>
+
+                <p>
+                    View your score, percentage, correct answers
+                    and pass or fail result.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- EXAM SECTION -->
+
+    <section class="section exam-section" id="exam">
+
+        <div class="section-title">
+
+            <h2>
+                TRD Examination
+            </h2>
+
+            <p>
+                Test your knowledge with the TRD online examination
+            </p>
+
+        </div>
+
+
+        <div class="exam-card">
+
+            <div class="exam-card-content">
+
+                <h2>
+                    📝 TRD Examination
+                </h2>
+
+                <p>
+                    The examination consists of multiple-choice
+                    questions selected randomly from the TRD
+                    question bank.
+                </p>
+
+
+                <div class="exam-details">
+
+                    <div class="exam-detail">
+                        <strong>Random</strong>
+                        Questions
+                    </div>
+
+                    <div class="exam-detail">
+                        <strong>MCQ</strong>
+                        Format
+                    </div>
+
+                    <div class="exam-detail">
+                        <strong>Timed</strong>
+                        Examination
+                    </div>
+
+                    <div class="exam-detail">
+                        <strong>Instant</strong>
+                        Result
+                    </div>
+
+                </div>
+
+                <br>
+
+                <a href="/exam/" class="exam-main-btn">
+                    START EXAM
+                </a>
+
+            </div>
+
+
+            <div class="exam-icon-large">
+                📝
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ABOUT -->
+
+    <section class="section" id="about">
+
+        <div class="section-title">
+
+            <h2>
+                About TRDinfo
+            </h2>
+
+        </div>
+
+        <div class="about">
+
+            <p>
+                TRDinfo is designed as a digital platform for
+                Traction Distribution related examination and
+                knowledge management. The present version focuses
+                on the TRD Examination Module. Additional
+                information and management modules can be added
+                to the platform in the future.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <h3>
+            🚆 TRDinfo
+        </h3>
+
+        <p>
+            TRD Examination & Knowledge Portal
+        </p>
+
+        <p>
+            © 2026 A.Parmesh Yadav. All Rights Reserved.
+        </p>
+
+    </footer>
+
+</body>
+</html>
