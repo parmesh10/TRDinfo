@@ -30,7 +30,7 @@ DEBUG = False
     #"10.54.19.27",
 #]
 
-ALLOWED_HOSTS = [
+ALLOWED_HOSTS = ["trdinfo.onrender.com",
     
 ]
 # Application definition
@@ -130,7 +130,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
-STATIC_URL = 'static/'
+# Static files
+
+STATIC_URL = "/static/"
+
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
