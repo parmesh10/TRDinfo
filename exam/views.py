@@ -360,7 +360,9 @@ def exam_result(request):
             "attempt": attempt
         }
     )
- def exam_evaluation(request):
+    
+    
+def exam_evaluation(request):
 
     attempt_id = request.session.get(
         "attempt_id"

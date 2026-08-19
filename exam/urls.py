@@ -30,8 +30,8 @@ urlpatterns = [
     ),
     path(
         "exam/evalution/",
-        views.exam_evalution,
-        name="exam_evalution"
+        views.exam_evaluation,
+        name="exam_evaluation"
     ),
 
 ]
