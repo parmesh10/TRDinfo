@@ -360,3 +360,32 @@ def exam_result(request):
             "attempt": attempt
         }
     )
+ def exam_evaluation(request):
+
+    attempt_id = request.session.get(
+        "attempt_id"
+    )
+
+    if not attempt_id:
+        return redirect("home")
+
+    try:
+        attempt = ExamAttempt.objects.get(
+            id=attempt_id
+        )
+
+    except ExamAttempt.DoesNotExist:
+        return redirect("home")
+
+    answers = attempt.answers.select_related(
+        "question"
+    ).all()
+
+    return render(
+        request,
+        "exam/evaluation.html",
+        {
+            "attempt": attempt,
+            "answers": answers,
+        }
+    )

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>Exam Evaluation</h2>
+
+    <h4>
+        Candidate: {{ attempt.candidate_name }}
+    </h4>
+
+    <p>
+        Score: {{ attempt.score }} / {{ attempt.total_questions }}
+    </p>
+
+    <hr>
+
+    {% for answer in answers %}
+
+        <div class="card mb-4">
+
+            <div class="card-body">
+
+                <h5>
+                    Question {{ forloop.counter }}
+                </h5>
+
+                <p>
+                    {{ answer.question.question_text }}
+                </p>
+
+                {% if answer.is_correct %}
+
+                    <div class="alert alert-success">
+                        <strong>Correct ✓</strong>
+                    </div>
+
+                {% else %}
+
+                    <div class="alert alert-danger">
+                        <strong>Wrong ✗</strong>
+                    </div>
+
+                {% endif %}
+
+
+                <p>
+                    <strong>Your Answer:</strong>
+
+                    {% if answer.selected_answer %}
+                        {{ answer.selected_answer }}
+                    {% else %}
+                        Not Answered
+                    {% endif %}
+                </p>
+
+
+                <p>
+                    <strong>Correct Answer:</strong>
+                    {{ answer.question.correct_answer }}
+                </p>
+
+
+                {% if answer.question.explanation %}
+
+                    <div class="alert alert-info">
+
+                        <strong>Explanation:</strong>
+
+                        <br>
+
+                        {{ answer.question.explanation }}
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

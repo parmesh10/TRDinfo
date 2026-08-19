@@ -28,5 +28,10 @@ urlpatterns = [
         views.exam_result,
         name="exam_result"
     ),
+    path(
+        "exam/evalution/",
+        views.exam_evalution,
+        name="exam_evalution"
+    ),
 
 ]
