@@ -361,27 +361,17 @@ def exam_result(request):
         }
     )
     
-    
-def exam_evaluation(request):
+def exam_evaluation(request, attempt_id):
 
-    attempt_id = request.session.get(
-        "attempt_id"
+    attempt = ExamAttempt.objects.get(
+        id=attempt_id
     )
-
-    if not attempt_id:
-        return redirect("home")
-
-    try:
-        attempt = ExamAttempt.objects.get(
-            id=attempt_id
-        )
-
-    except ExamAttempt.DoesNotExist:
-        return redirect("home")
 
     answers = attempt.answers.select_related(
         "question"
-    ).all()
+    ).order_by(
+        "id"
+    )
 
     return render(
         request,

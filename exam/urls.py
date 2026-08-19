@@ -24,14 +24,13 @@ urlpatterns = [
     ),
 
     path(
-        "exam/result/",
+        "result/",
         views.exam_result,
         name="exam_result"
     ),
     path(
-        "exam/evalution/",
-        views.exam_evaluation,
-        name="exam_evaluation"
+    "evaluation/<int:attempt_id>/",
+    views.exam_evaluation,
+    name="exam_evaluation"
     ),
-
 ]

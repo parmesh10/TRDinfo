@@ -159,7 +159,11 @@
             background: #0b3d62;
             color: white;
         }
-
+		.evaluation-btn {
+			background: #16a34a;
+			color: white;
+		}
+		
         @media (max-width: 600px) {
 
             .result-card {
@@ -363,6 +367,9 @@
 
 
         <div class="buttons">
+			<a href="{% url 'exam_evaluation' attempt.id %}" class="btn evaluation-btn">
+			View Evaluation
+			</a>
 
             <a
                 href="/"
