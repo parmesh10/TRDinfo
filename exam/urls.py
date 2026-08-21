@@ -2,7 +2,6 @@ from django.urls import path
 
 from . import views
 
-
 urlpatterns = [
 
     path(
@@ -33,4 +32,5 @@ urlpatterns = [
     views.exam_evaluation,
     name="exam_evaluation"
     ),
+    
 ]
