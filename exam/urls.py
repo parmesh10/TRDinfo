@@ -16,7 +16,11 @@ urlpatterns = [
         views.exam_start,
         name="exam_start"
     ),
-
+    path(
+        "exam/select-subject/",
+        views.select_subject,
+        name="select_subject"
+    ),
     path(
         "exam/take/",
         views.take_exam,

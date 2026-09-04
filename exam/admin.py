@@ -8,11 +8,16 @@ from openpyxl import load_workbook
 
 from .models import (
     Question,
+    Subject,
     Exam,
     ExamAttempt,
     ExamAnswer,
 )
 
+@admin.register(Subject)
+class SubjectAdmin(admin.ModelAdmin):
+    list_display = ("number", "name","active")
+    ordering = ("number",)
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
@@ -27,6 +32,7 @@ class QuestionAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
+        "subject",
         "difficulty",
         "active",
     )
@@ -126,6 +132,7 @@ class QuestionAdmin(admin.ModelAdmin):
                     "option c",
                     "option d",
                     "correct answer",
+                    "subject",
                 ]
 
                 missing = [
@@ -177,7 +184,7 @@ class QuestionAdmin(admin.ModelAdmin):
                     correct_answer = value(
                         "correct answer"
                     ).upper()
-
+                    subject_name = value("subject")
                     explanation = value("explanation")
 
                     difficulty = value(
@@ -220,7 +227,12 @@ class QuestionAdmin(admin.ModelAdmin):
                             "Correct Answer must be A, B, C or D."
                         )
                         continue
-
+                    if not subject_name:
+                        errors.append(
+                        f"Row {row_number}: "
+                        "Subject is empty."
+                        )
+                        continue
                     if difficulty not in (
                         "EASY",
                         "MEDIUM",
@@ -244,7 +256,12 @@ class QuestionAdmin(admin.ModelAdmin):
                     ).exists():
                         skipped += 1
                         continue
-
+                    subject, created = Subject.objects.get_or_create(
+                        name=subject_name,
+                        defaults={
+                        "number": Subject.objects.count() + 1
+                                }
+                        )
                     Question.objects.create(
                         question_text=question_text,
                         option_a=option_a,
@@ -255,6 +272,7 @@ class QuestionAdmin(admin.ModelAdmin):
                         explanation=explanation,
                         difficulty=difficulty,
                         active=active,
+                        subject=subject,
                     )
 
                     imported += 1

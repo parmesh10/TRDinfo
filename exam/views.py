@@ -1,6 +1,6 @@
 import random
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
 from .models import (
@@ -8,11 +8,11 @@ from .models import (
     Question,
     ExamAttempt,
     ExamAnswer,
+    Subject,
 )
 
 
 def home(request):
-
     return render(
         request,
         "home.html"
@@ -26,7 +26,6 @@ def exam_start(request):
     ).first()
 
     if not exam:
-
         return render(
             request,
             "exam/no_exam.html"
@@ -49,60 +48,25 @@ def exam_start(request):
                 "exam/start.html",
                 {
                     "exam": exam,
-                    "error": "Please enter candidate name and employee number."
-                }
-            )
-
-        # Get active questions
-        questions = list(
-            Question.objects.filter(
-                active=True
-            )
-        )
-
-        # Check enough questions exist
-        if len(questions) < exam.number_of_questions:
-
-            return render(
-                request,
-                "exam/start.html",
-                {
-                    "exam": exam,
                     "error": (
-                        f"Only {len(questions)} active questions "
-                        f"are available. "
-                        f"{exam.number_of_questions} are required."
+                        "Please enter candidate name "
+                        "and employee number."
                     )
                 }
             )
 
-        # Randomize
-        random.shuffle(questions)
-
-        # Select required number
-        questions = questions[
-            :exam.number_of_questions
-        ]
-
         # Store candidate information
-        request.session["candidate_name"] = (
-            candidate_name
-        )
-
-        request.session["employee_number"] = (
-            employee_number
-        )
-
+        request.session["candidate_name"] = candidate_name
+        request.session["employee_number"] = employee_number
         request.session["exam_id"] = exam.id
 
-        request.session["question_ids"] = [
-            question.id
-            for question in questions
-        ]
+        # Clear any previous exam data
+        request.session.pop("subject_id", None)
+        request.session.pop("question_ids", None)
+        request.session.pop("attempt_id", None)
 
-        return redirect(
-            "take_exam"
-        )
+        # Go to subject selection
+        return redirect("select_subject")
 
     return render(
         request,
@@ -113,31 +77,166 @@ def exam_start(request):
     )
 
 
+
+def select_subject(request):
+
+    subjects = Subject.objects.filter(
+        active=True
+    ).order_by("number")
+
+    if not subjects.exists():
+
+        return render(
+            request,
+            "exam/no_subject.html"
+        )
+
+    if request.method == "POST":
+
+        subject_id = request.POST.get(
+            "subject_id"
+        )
+
+        if not subject_id:
+
+            return render(
+                request,
+                "exam/select_subject.html",
+                {
+                    "subjects": subjects,
+                    "error": "Please select a chapter."
+                }
+            )
+
+        try:
+
+            subject = Subject.objects.get(
+                id=subject_id,
+                active=True
+            )
+
+        except Subject.DoesNotExist:
+
+            return render(
+                request,
+                "exam/select_subject.html",
+                {
+                    "subjects": subjects,
+                    "error": "Invalid subject selected."
+                }
+            )
+
+        # Store selected subject
+        request.session["subject_id"] = subject.id
+
+        # Remove old question selection
+        request.session.pop(
+            "question_ids",
+            None
+        )
+
+        return redirect("take_exam")
+
+    return render(
+        request,
+        "exam/select_subject.html",
+        {
+            "subjects": subjects
+        }
+    )
+
+
 def take_exam(request):
 
     exam_id = request.session.get(
         "exam_id"
     )
 
+    subject_id = request.session.get(
+        "subject_id"
+    )
+
     question_ids = request.session.get(
         "question_ids"
     )
 
-    if not exam_id or not question_ids:
+    if not exam_id or not subject_id:
 
         return redirect(
             "exam_start"
         )
 
-    exam = Exam.objects.get(
-        id=exam_id
-    )
+    try:
 
-    questions = Question.objects.filter(
-        id__in=question_ids
-    )
+        exam = Exam.objects.get(
+            id=exam_id,
+            active=True
+        )
 
+        subject = Subject.objects.get(
+            id=subject_id,
+            active=True
+        )
+
+    except (
+        Exam.DoesNotExist,
+        Subject.DoesNotExist
+    ):
+
+        return redirect(
+            "exam_start"
+        )
+
+        # -------------------------------------------------
+    # Select questions only once
+    # -------------------------------------------------
+
+    if not question_ids:
+
+        questions = list(
+            Question.objects.filter(
+                subject=subject,
+                active=True
+            )
+        )
+
+        # Check whether questions are available
+        if not questions:
+
+            return render(
+                request,
+                "exam/no_exam.html",
+                {
+                    "message": (
+                        f"No questions are available "
+                        f"for {subject.name}."
+                    )
+                }
+            )
+
+        # Randomize ALL questions
+        random.shuffle(questions)
+
+        # Keep ALL questions
+        question_ids = [
+            question.id
+            for question in questions
+        ]
+
+        # Store ALL question IDs in session
+        request.session["question_ids"] = question_ids
+
+    else:
+
+        # Retrieve previously selected questions
+        questions = Question.objects.filter(
+            id__in=question_ids
+        )
+
+    # -------------------------------------------------
     # Preserve random order
+    # -------------------------------------------------
+
     question_dict = {
         question.id: question
         for question in questions
@@ -148,6 +247,10 @@ def take_exam(request):
         for qid in question_ids
         if qid in question_dict
     ]
+
+    # -------------------------------------------------
+    # Submit exam
+    # -------------------------------------------------
 
     if request.method == "POST":
 
@@ -184,7 +287,10 @@ def take_exam(request):
                 ""
             )
 
+            # -----------------------------------------
             # Unanswered
+            # -----------------------------------------
+
             if not selected_answer:
 
                 unanswered_count += 1
@@ -199,7 +305,10 @@ def take_exam(request):
 
                 continue
 
+            # -----------------------------------------
             # Correct answer
+            # -----------------------------------------
+
             if selected_answer == question.correct_answer:
 
                 correct_count += 1
@@ -216,7 +325,10 @@ def take_exam(request):
                     marks_obtained=marks,
                 )
 
+            # -----------------------------------------
             # Wrong answer
+            # -----------------------------------------
+
             else:
 
                 wrong_count += 1
@@ -240,6 +352,10 @@ def take_exam(request):
                     is_correct=False,
                     marks_obtained=marks,
                 )
+
+        # ---------------------------------------------
+        # Calculate result
+        # ---------------------------------------------
 
         attempted_count = (
             correct_count +
@@ -266,7 +382,10 @@ def take_exam(request):
             exam.pass_percentage
         )
 
+        # ---------------------------------------------
         # Update attempt
+        # ---------------------------------------------
+
         attempt.attempted_questions = (
             attempted_count
         )
@@ -315,15 +434,25 @@ def take_exam(request):
             None
         )
 
+        request.session.pop(
+            "subject_id",
+            None
+        )
+
         return redirect(
             "exam_result"
         )
+
+    # ---------------------------------------------
+    # Display exam
+    # ---------------------------------------------
 
     return render(
         request,
         "exam/exam.html",
         {
             "exam": exam,
+            "subject": subject,
             "questions": ordered_questions,
         }
     )
@@ -360,12 +489,21 @@ def exam_result(request):
             "attempt": attempt
         }
     )
-    
+
+
 def exam_evaluation(request, attempt_id):
 
-    attempt = ExamAttempt.objects.get(
-        id=attempt_id
-    )
+    try:
+
+        attempt = ExamAttempt.objects.get(
+            id=attempt_id
+        )
+
+    except ExamAttempt.DoesNotExist:
+
+        return redirect(
+            "home"
+        )
 
     answers = attempt.answers.select_related(
         "question"

@@ -1,6 +1,32 @@
 from django.db import models
 
 
+class Subject(models.Model):
+
+    name = models.CharField(
+        max_length=300,
+        unique=True
+    )
+
+    number = models.PositiveIntegerField(
+        unique=True
+    )
+
+    active = models.BooleanField(
+        default=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        ordering = ["number"]
+
+    def __str__(self):
+        return f"{self.number}. {self.name}"
+
+
 class Question(models.Model):
 
     DIFFICULTY_CHOICES = [
@@ -8,6 +34,14 @@ class Question(models.Model):
         ("MEDIUM", "Medium"),
         ("HARD", "Hard"),
     ]
+
+    subject = models.ForeignKey(
+        Subject,
+        on_delete=models.PROTECT,
+        related_name="questions",
+        null=True,
+        blank=True
+    )
 
     question_text = models.TextField(
         verbose_name="Question"

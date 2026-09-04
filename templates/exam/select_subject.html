@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Select Chapter - TRDinfo</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, #0f172a, #1e3a8a);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+        }
+
+        .logo {
+            font-size: 30px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            margin: 8px 0 0;
+            font-size: 14px;
+            opacity: 0.85;
+        }
+
+        /* MAIN CONTAINER */
+        .container {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .title-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .title-section h1 {
+            margin: 0;
+            font-size: 30px;
+            color: #111827;
+        }
+
+        .title-section p {
+            margin-top: 10px;
+            color: #6b7280;
+            font-size: 15px;
+        }
+
+        /* ERROR */
+        .error {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 12px 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        /* CHAPTER GRID */
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        /* HIDE RADIO */
+        .subject input {
+            display: none;
+        }
+
+        /* CHAPTER CARD */
+        .subject {
+            display: flex;
+            align-items: center;
+            min-height: 95px;
+            padding: 18px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+        .subject:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(37,99,235,0.12);
+        }
+
+        /* SELECTED CARD */
+        .subject:has(input:checked) {
+            border-color: #2563eb;
+            background: #eff6ff;
+            box-shadow: 0 5px 18px rgba(37,99,235,0.18);
+        }
+
+        /* NUMBER */
+        .chapter-number {
+            min-width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #e0e7ff;
+            color: #1d4ed8;
+
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: bold;
+
+            margin-right: 16px;
+        }
+
+        .subject:has(input:checked) .chapter-number {
+            background: #2563eb;
+            color: white;
+        }
+
+        /* CHAPTER NAME */
+        .chapter-info {
+            flex: 1;
+        }
+
+        .chapter-label {
+            display: block;
+            font-size: 11px;
+            font-weight: bold;
+            color: #6b7280;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .chapter-name {
+            font-size: 15px;
+            line-height: 1.4;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        /* CHECK CIRCLE */
+        .check-circle {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            margin-left: 12px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .subject:has(input:checked) .check-circle {
+            border-color: #2563eb;
+            background: #2563eb;
+        }
+
+        .subject:has(input:checked) .check-circle::after {
+            content: "";
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            top: 6px;
+            left: 6px;
+        }
+
+        /* START BUTTON */
+        .start-section {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        button {
+            width: 100%;
+            max-width: 450px;
+            padding: 17px 25px;
+
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+
+            border: none;
+            border-radius: 12px;
+
+            font-size: 18px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+
+            cursor: pointer;
+
+            box-shadow: 0 6px 15px rgba(37,99,235,0.25);
+
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 9px 20px rgba(37,99,235,0.30);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            margin: 35px 0 20px;
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        /* MOBILE */
+        @media (max-width: 700px) {
+
+            .logo {
+                font-size: 25px;
+            }
+
+            .title-section h1 {
+                font-size: 24px;
+            }
+
+            .subjects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .subject {
+                min-height: 85px;
+                padding: 14px;
+            }
+
+            .chapter-number {
+                min-width: 42px;
+                height: 42px;
+                font-size: 15px;
+                margin-right: 12px;
+            }
+
+            .chapter-name {
+                font-size: 14px;
+            }
+
+            .container {
+                margin-top: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo">TRDinfo</div>
+        <p>Technical Railway Department Information & Exam Portal</p>
+    </header>
+
+
+    <!-- MAIN -->
+    <main class="container">
+
+        <div class="title-section">
+            <h1>📚 Select Exam Chapter</h1>
+            <p>Choose one chapter to start your examination</p>
+        </div>
+
+
+        {% if error %}
+            <div class="error">
+                {{ error }}
+            </div>
+        {% endif %}
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="subjects-grid">
+
+                {% for subject in subjects %}
+
+                    <label class="subject">
+
+                        <input
+                            type="radio"
+                            name="subject_id"
+                            value="{{ subject.id }}"
+                            required
+                        >
+
+                        <div class="chapter-number">
+                            {{ subject.number }}
+                        </div>
+
+                        <div class="chapter-info">
+
+                            <span class="chapter-label">
+                                Chapter {{ subject.number }}
+                            </span>
+
+                            <span class="chapter-name">
+                                {{ subject.name }}
+                            </span>
+
+                        </div>
+
+                        <div class="check-circle"></div>
+
+                    </label>
+
+                {% endfor %}
+
+            </div>
+
+
+            <!-- START EXAM -->
+            <div class="start-section">
+
+                <button type="submit">
+                    🚀 START EXAM
+                </button>
+
+            </div>
+
+        </form>
+
+
+        <div class="footer">
+            © 2026 TRDinfo • Online Examination Portal
+        </div>
+
+    </main>
+
+</body>
+</html>
